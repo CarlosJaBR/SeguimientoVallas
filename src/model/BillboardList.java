@@ -84,7 +84,7 @@ public class BillboardList {
 			
 			while(document.ready()) {
 				String obj = document.readLine();
-				String [] data = obj.split("|");
+				String [] data = obj.split("\\|");
 				
 				
 				double height = Double.parseDouble(data[0]);

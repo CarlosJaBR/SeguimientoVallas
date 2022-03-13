@@ -17,6 +17,7 @@ public class AdministrationSystem {
 		sca = new Scanner(System.in);
 		bList = new BillboardList(); 
 		bList.deserializar();
+		
 	}
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException{

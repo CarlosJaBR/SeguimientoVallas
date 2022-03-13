@@ -1,6 +1,10 @@
 package ui;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 import model.*; 
 
@@ -9,17 +13,19 @@ public class AdministrationSystem {
 	private Scanner sca; 
 	private BillboardList bList; 
 	
-	public AdministrationSystem() {
+	public AdministrationSystem() throws ClassNotFoundException, IOException {
 		sca = new Scanner(System.in);
 		bList = new BillboardList(); 
+		bList.deserializar();
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException, ClassNotFoundException{
 		
 		AdministrationSystem adS = new AdministrationSystem(); 
 		
 		System.out.println("=========================="); 
 		System.out.println("         Welcome          \n");
+		
 		
 		int option = -1; 
 		do {
@@ -51,106 +57,62 @@ public class AdministrationSystem {
 		return option; 
 	}
 	
-	public void menu(int optionUser) {
+	@SuppressWarnings("unused")
+	public void menu(int optionUser) throws IOException, ClassNotFoundException {
 		
 		switch(optionUser){
 		case 0: 
 			System.out.println("****Bye****");
+			bList.serializar();
 			break; 
 		case 1: 
-			System.out.println("Hola 1");
+			String fileImport = dataImport();
+			bList.loadBillboards(fileImport); 
+			System.out.println("Data import with successfully ^-^\n");
 			break; 
 		case 2:
 			String data =dataBillboard();
 			Billboard obj =bList.creatBillboard(data);
 			bList.addBillboard(obj);
-		
+			System.out.println("Billboard add with successfully ^-^\n");
 			break; 
 		case 3: 
-			System.out.println("Hola 3");
+			System.out.println(bList.listBillboards());
+			
 			break; 
 		case 4: 
-			System.out.println("Hola 4");
+			String report = bList.reportBillboard();
+			System.out.println(report);
+			bList.writeReport(report);
+			System.out.println("\n\n¡Report saved with successfully ^-^!\n");
+			
 			break; 
 		default: 
 			System.out.println("Incorrect option");
 			break; 
 		}
 	}
-	
-	public void dataImport() {
-		String url = ""; 
+	/**
+	 * dataImport method
+	 * Este método recibe la url del CVS a importar.
+	 *  
+	 * */
+	public String dataImport() {
+		String  url = ""; 
+ 
+		System.out.println("Please, enter the url of the file to import");
 		
-		System.out.println("");
+		System.out.println("For example, enter this path: .\\\\files\\\\Datos1.csv\n");
 		
+		url = sca.nextLine(); 		
+		
+		return url;
 	}
 	
-	public void registerBillboard() {
-		double height = 0.0; 
-		double width = 0.0; 
-		double area = 0.0; 
-		boolean inUse = false;
-		String brand = "";
-		
-		try {
-			
-			System.out.println("Enter the following data:\n");
-			System.out.print("Height: ");
-			height = sca.nextDouble(); 
-			System.out.print("width: ");
-			width = sca.nextDouble();
-			//area calculate, in cm2
-			area = height*width;
-			//billboard state
-			inUse = stateBillboard();
-			sca.nextLine();
-			System.out.print("Brand: ");
-			brand = sca.nextLine(); 
-			System.out.println("\n");
-			bList.addBillboard(height,width,area,inUse,brand);
-			System.out.println(bList.getBillboards().get(0).toString());
-		}catch(NumberFormatException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public boolean stateBillboard() {
-		boolean state = false; 
-		int option = 1; 
-		boolean flag = false;
-		
-		do {
-		
-			try {
-				do {
-					System.out.println("The billboard is in use?\n"+
-								"(1) Yes\n"+
-								"(2) No\n");
-					sca.nextLine();
-					option = sca.nextInt();
-					switch(option) {
-					case 1:
-						state = true;
-						break;
-					case 2:
-						state = false;
-						break;
-					default:
-						System.out.println("Incorrect option");
-						break; 
-					}
-					flag = false;
-				}while(option>2||option<1);
-			
-			}catch(Exception e) {
-				e.printStackTrace();
-				flag = true;
-			}
-		}while(flag==true);
-		
-		return state;
-	}
-	
+	/**
+	 * dataBillboard
+	 * Este método recibe los datos del Billboard a registrar.
+	 * */
 	public String dataBillboard() {
 		String info = "";
 		
@@ -160,5 +122,6 @@ public class AdministrationSystem {
 		info = sca.nextLine(); 
 		return info; 
 	}
+	
 	
 }
